@@ -1,0 +1,23 @@
+def generate_continuously(prompt, max_length):
+    chunks = []
+    current_chunk = ""
+    l=len(prompt)
+    while len(current_chunk) < max_length:
+        
+        response = pipe(prompt,
+                         # Length of each chunk
+                        do_sample=False, # Use greedy decoding
+                        no_repeat_ngram_size=2, # No repetition penalty
+                        early_stopping=True, # Stop as soon as a period is generated
+                        pad_token_id=model.config.eos_token_id, # Use the EOS token as the pad token
+                        ) 
+
+        
+        current_chunk += response[0]['generated_text'][len(prompt):]
+        l=response[0]['generated_text'][len(prompt):]
+        
+        chunks.append(l)
+        
+        prompt +=response[0]['generated_text'][len(prompt):] 
+
+    return chunks
